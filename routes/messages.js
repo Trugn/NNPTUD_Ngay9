@@ -41,7 +41,7 @@ router.get('/', CheckLogin, async function (req, res, next) {
       },
       {
         $lookup: {
-          from: "user",
+          from: "users",
           localField: "_id",
           foreignField: "_id",
           as: "userInfo"
@@ -50,28 +50,48 @@ router.get('/', CheckLogin, async function (req, res, next) {
       {
         $unwind: {
           path: "$userInfo",
-          preserveNullAndEmptyArrays: false
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          userInfo: { $ne: null }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          lastMessage: 1,
+          userInfo: {
+            _id: 1,
+            username: 1,
+            fullName: 1,
+            email: 1,
+            avatarUrl: 1
+          }
         }
       }
     ]);
 
-    // Format the response
-    const formattedConversations = conversations.map((conv) => ({
-      conversationWith: {
-        _id: conv.userInfo._id,
-        username: conv.userInfo.username,
-        fullName: conv.userInfo.fullName,
-        email: conv.userInfo.email,
-        avatarUrl: conv.userInfo.avatarUrl
-      },
-      lastMessage: {
-        from: conv.lastMessage.from,
-        to: conv.lastMessage.to,
-        messageContent: conv.lastMessage.messageContent,
-        createdAt: conv.lastMessage.createdAt
-      },
-      unreadCount: conv.unreadCount || 0
-    }));
+    // Format the response - fix lỗi khi userInfo không tồn tại
+    const formattedConversations = conversations
+      .filter(conv => conv.userInfo && conv.userInfo._id)
+      .map((conv) => ({
+        conversationWith: {
+          _id: conv.userInfo._id,
+          username: conv.userInfo.username || "",
+          fullName: conv.userInfo.fullName || "",
+          email: conv.userInfo.email || "",
+          avatarUrl: conv.userInfo.avatarUrl || "https://i.sstatic.net/l60Hf.png"
+        },
+        lastMessage: {
+          _id: conv.lastMessage._id,
+          from: conv.lastMessage.from,
+          to: conv.lastMessage.to,
+          messageContent: conv.lastMessage.messageContent,
+          createdAt: conv.lastMessage.createdAt
+        }
+      }));
 
     res.status(200).send({
       success: true,
@@ -79,6 +99,7 @@ router.get('/', CheckLogin, async function (req, res, next) {
       count: formattedConversations.length
     });
   } catch (error) {
+    console.error("Lỗi trong GET /:", error);
     res.status(500).send({ message: "Lỗi server", error: error.message });
   }
 });
