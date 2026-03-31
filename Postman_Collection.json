@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "NNPTUD-C3-Messages-API",
+    "description": "Messages API Collection - Tin nhắn routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "1. Get All Messages with User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/messages/65f123abc456def789abc222",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "messages",
+                "65f123abc456def789abc222"
+              ]
+            },
+            "description": "Lấy tất cả tin nhắn giữa user hiện tại và userID\n\nỨNG DỤNG:\n- Lấy toàn bộ cuộc trò chuyện 2 chiều giữa 2 user\n- from: user hiện tại, to: userID\n- from: userID, to: user hiện tại\n\nHÃy thay 65f123abc456def789abc222 bằng user ID thực tế"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Send Text Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"65f123abc456def789abc222\",\n  \"messageContent\": {\n    \"type\": \"text\",\n    \"text\": \"Xin chào, đây là tin nhắn văn bản\"\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/messages/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "messages",
+                ""
+              ]
+            },
+            "description": "Gửi tin nhắn văn bản\n\nĐIều kiện:\n- type PHẢI là 'text'\n- text là nội dung tin nhắn\n- to là ID người nhận\n\nHãy thay 65f123abc456def789abc222 bằng user ID thực tế"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Send File Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"65f123abc456def789abc222\",\n  \"messageContent\": {\n    \"type\": \"file\",\n    \"text\": \"/uploads/document_2024.pdf\"\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/messages/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "messages",
+                ""
+              ]
+            },
+            "description": "Gửi tin nhắn file\n\nĐiều kiện:\n- type PHẢI là 'file'\n- text là đường dẫn tới file (ví dụ: /uploads/document.pdf)\n- to là ID người nhận\n\nHãy thay 65f123abc456def789abc222 bằng user ID thực tế\nHãy thay /uploads/document_2024.pdf bằng đường dẫn file thực tế"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Conversations List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/messages/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "messages",
+                ""
+              ]
+            },
+            "description": "Lấy danh sách cuộc trò chuyện\n\nỨNG DỤNG:\n- Lấy tin nhắn cuối cùng của mỗi cuộc trò chuyện\n- Lấy thông tin người dùng của mỗi cuộc trò chuyện\n- Sắp xếp theo thời gian cuối cùng (mới nhất trước)\n\nResponse sẽ chứa:\n- conversationWith: thông tin user\n- lastMessage: tin nhắn cuối cùng"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
